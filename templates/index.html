@@ -575,6 +575,44 @@
             color: gold;
             text-shadow: 0 0 10px gold;
         }
+
+        .feedback-section {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .feedback-section textarea {
+            width: 90%;
+            max-width: 400px;
+            padding: 10px;
+            border-radius: 10px;
+            border: 1px solid #00ffff;
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            font-family: inherit;
+            resize: vertical;
+        }
+
+        .feedback-section button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            background: linear-gradient(45deg, #00ffff, #0080ff);
+            border: none;
+            border-radius: 20px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .feedback-section button:hover {
+            background: linear-gradient(45deg, #00ffcc, #0077cc);
+        }
+
+        #feedback-status {
+            margin-top: 10px;
+            color: #00ffcc;
+            font-size: 14px;
+        }
     </style>
 </head>
 
@@ -592,7 +630,7 @@
                     <div class="energy-ring"></div>
                 </div>
                 <div class="profile-image">
-                    <img src="priyaAkka.jpg">
+                    <img src="{{ url_for('static', filename='priyaAkka.jpg') }}" alt="Priya Akka">
                 </div>
                 <div class="star-rating">
                     <span class="star" onclick="rate(1)">★</span>
@@ -600,6 +638,13 @@
                     <span class="star" onclick="rate(3)">★</span>
                     <span class="star" onclick="rate(4)">★</span>
                     <span class="star" onclick="rate(5)">★</span>
+                </div>
+                <div class="feedback-section">
+                    <!-- <label for="feedback">:</label><br> -->
+                    <textarea id="feedback" rows="4" placeholder="Leave your feedback..."></textarea><br>
+                    <button onclick="submitFeedback()">Submit Feedback</button>
+                    <!--<p id="feedback-status"></p>-->
+                    <a href="/feedbacks/Priyanka Hulsure"><button>View Received Feedback</button></a>
                 </div>
 
             </div>
@@ -910,6 +955,47 @@
 
             console.log("Rated:", stars, "stars");
         }
+        
+
+        //feedback page
+
+        function submitFeedback() {
+    const feedback = document.getElementById('feedback').value.trim();
+    const status = document.getElementById('feedback-status');
+
+    if (feedback === "") {
+        status.textContent = "Please enter feedback before submitting.";
+        status.style.color = "#ff8080";
+    } else {
+        // Send to Flask backend
+        fetch('/submit_feedback', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                message: feedback,
+                sender: "Web User"  // you can collect sender info if needed
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === "success") {
+                status.textContent = "Thank you for your feedback!";
+                status.style.color = "#00ffcc";
+                document.getElementById('feedback').value = "";
+            } else {
+                status.textContent = "Failed to send feedback.";
+                status.style.color = "#ff8080";
+            }
+        })
+        .catch(err => {
+            console.error("Error:", err);
+            status.textContent = "Server error.";
+            status.style.color = "#ff8080";
+        });
+    }
+}
 
     </script>
 </body>

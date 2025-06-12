@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Feedback for {{ user }}</title>
+</head>
+<body>
+    <h2>Feedback received for {{ user }}</h2>
+
+    {% if feedbacks %}
+        <ul>
+        {% for fb in feedbacks %}
+            <li>
+                <strong>{{ fb.sender }}</strong>: {{ fb.message }} <br>
+                <small>{{ fb.timestamp }}</small>
+            </li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>No feedback yet.</p>
+    {% endif %}
+
+    <p><a href="/">⬅ Back to Profile</a></p>
+</body>
+</html>
